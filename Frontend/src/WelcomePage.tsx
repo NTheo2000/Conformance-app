@@ -106,7 +106,7 @@ const WelcomePage: React.FC = () => {
   return (
     <Box sx={{ width: '100%', maxWidth: 700, margin: '0 auto', textAlign: 'center', padding: 4 }}>
       <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
-        Welcome to the Conformance Analysis App
+        Welcome to the Conformance Visualization App
       </Typography>
       <Typography variant="body1" gutterBottom sx={{ marginBottom: 3 }}>
         Upload your BPMN and XES files to start analyzing process conformance.
