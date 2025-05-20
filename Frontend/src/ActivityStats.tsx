@@ -8,20 +8,22 @@ import InfoIcon from '@mui/icons-material/Info';
 const ActivityStats: React.FC = () => {
   const navigate = useNavigate();
   const { extractedElements, activityDeviations } = useFileContext();
+const deviations = activityDeviations.deviations;
 
 
-  const activityStats = extractedElements
+const activityStats = extractedElements
   .map((element: any) => {
-    const deviation = activityDeviations.find((d) => d.name === element.name);
-    const skipped = deviation?.skipped || 0;
-    const inserted = deviation?.inserted || 0;
+    const deviation = deviations.find((d) => d.name === element.name);
+    const skipped = deviation?.skipped_percent || 0;
+    const inserted = deviation?.inserted_percent || 0;
     return {
       name: element.name,
       skipped,
       inserted,
-      total: skipped + inserted, // for sorting
+      total: skipped + inserted,
     };
   })
+
   .sort((a, b) => b.total - a.total) // descending sort by total
   .map(({ name, skipped, inserted }) => ({
     name,
@@ -64,7 +66,7 @@ const ActivityStats: React.FC = () => {
         }}
       >
         <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', margin: '16px 0' }}>
-          Times skipped and inserted per activity
+        Percentage of traces where activity was skipped or inserted
         </Typography>
 
         <BarChart
@@ -75,12 +77,19 @@ const ActivityStats: React.FC = () => {
           margin={{ top: 20, right: 20, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" opacity={0.5} />
-          <XAxis type="number" tick={{ fontSize: 12 }} />
+          <XAxis
+  type="number"
+  domain={[0, 100]}
+  tick={{ fontSize: 12 }}
+  tickFormatter={(tick) => `${tick}%`}
+/>
+
           <YAxis type="category" dataKey="name" width={200} tick={{ fontSize: 12 }} />
           <RechartsTooltip
             contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #ddd' }}
             labelStyle={{ fontWeight: 'bold' }}
-            formatter={(value: number, name: string) => [`${Math.round(value)}`, name]}
+            formatter={(value: number, name: string) => [`${value.toFixed(1)}%`, name]}
+
 
           />
           <Legend verticalAlign="top" align="center" wrapperStyle={{ paddingBottom: 20 }} />

@@ -1,11 +1,8 @@
-# process_mining/activity_deviations.py
-
 import os
 from collections import defaultdict
 import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.conformance.alignments.petri_net import algorithm as alignments
-
 
 def get_activity_deviations(bpmn_path: str, xes_path: str):
     if not os.path.exists(bpmn_path):
@@ -19,6 +16,7 @@ def get_activity_deviations(bpmn_path: str, xes_path: str):
 
     # Import XES event log
     log = xes_importer.apply(xes_path)
+    total_traces = len(log) if log else 1  # prevent division by zero
 
     # Compute alignments
     aligned_traces = alignments.apply_log(log, net, initial_marking, final_marking)
@@ -34,14 +32,24 @@ def get_activity_deviations(bpmn_path: str, xes_path: str):
             elif log_move == '>>' and model_move not in (None, '>>'):
                 skipped[model_move] += 1
 
-    # Convert to output format
+    # Combine counts and percentages
     deviations = []
     all_activities = set(skipped.keys()) | set(inserted.keys())
     for activity in all_activities:
+        skipped_count = skipped[activity]
+        inserted_count = inserted[activity]
+        skipped_percent = round((skipped_count / total_traces) * 100, 2)
+        inserted_percent = round((inserted_count / total_traces) * 100, 2)
+
         deviations.append({
             "name": activity,
-            "skipped": skipped[activity],
-            "inserted": inserted[activity]
+            "skipped": skipped_count,              # raw count (kept for compatibility)
+            "inserted": inserted_count,            # raw count (kept for compatibility)
+            "skipped_percent": skipped_percent,    # new field
+            "inserted_percent": inserted_percent   # new field
         })
 
-    return deviations
+    return {
+        "deviations": deviations,
+        "total_traces": total_traces
+    }

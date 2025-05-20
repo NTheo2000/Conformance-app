@@ -5,6 +5,8 @@ import BpmnModeler from 'bpmn-js/lib/Modeler';
 import { useFileContext } from './FileContext';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import InfoIcon from '@mui/icons-material/Info';
+import { ActivityDeviation } from './FileContext';
+
 
 const COLORS = {
   red: { stroke: 'red', fill: 'lightpink' },
@@ -131,7 +133,7 @@ const ViewBPMN: React.FC = () => {
         
         const realStats = extractedElements.reduce(
           (acc: Record<string, { skipped: number; inserted: number }>, activity: { id: string; name: string }) => {
-            const deviation = activityDeviations.find((d) => d.name === activity.name);
+            const deviation = activityDeviations.deviations.find((d) => d.name === activity.name);
             acc[activity.id] = {
               skipped: deviation?.skipped || 0,
               inserted: deviation?.inserted || 0,
@@ -168,7 +170,12 @@ const ViewBPMN: React.FC = () => {
               statsBox.style.width = '140px';
           
               // ✅ Use `generatedStats` instead of outdated `activityStats`
-              const stats = activityDeviations.find((d) => d.name === element.businessObject.name) || { skipped: 0, inserted: 0 };
+              const stats: Pick<ActivityDeviation, 'skipped' | 'inserted'> =
+  activityDeviations.deviations.find((d) => d.name === element.businessObject.name)
+  || { skipped: 0, inserted: 0 };
+
+
+
 
 
           

@@ -75,6 +75,9 @@ def api_activity_deviations():
     if not last_uploaded_files['bpmn'] or not last_uploaded_files['xes']:
         return jsonify({"error": "No files uploaded yet."}), 400
 
+    result = get_activity_deviations(last_uploaded_files['bpmn'], last_uploaded_files['xes'])
+    return jsonify(result)
+
     deviations = get_activity_deviations(last_uploaded_files['bpmn'], last_uploaded_files['xes'])
     return jsonify(deviations)
 @app.route('/api/outcome-distribution', methods=['GET'])

@@ -80,7 +80,11 @@ const WelcomePage: React.FC = () => {
 
       const deviationResponse = await fetch('http://127.0.0.1:5000/api/activity-deviations');
       const deviationJson = await deviationResponse.json();
-      setActivityDeviations(deviationJson);
+      setActivityDeviations({
+        deviations: deviationJson.deviations,
+        total_traces: deviationJson.total_traces,
+      });
+      
       console.log('Activity Deviations:', deviationJson);
 
       const outcomeResponse = await fetch('http://127.0.0.1:5000/api/outcome-distribution');

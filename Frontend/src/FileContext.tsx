@@ -26,10 +26,17 @@ interface ConformanceBin {
   traceCount: number;
 }
 
-interface ActivityDeviation {
+export interface ActivityDeviation {
   name: string;
   skipped: number;
   inserted: number;
+  skipped_percent: number;
+  inserted_percent: number;
+}
+
+interface ActivityDeviationResult {
+  deviations: ActivityDeviation[];
+  total_traces: number;
 }
 
 interface FileContextType {
@@ -45,7 +52,7 @@ interface FileContextType {
   conformanceBins: ConformanceBin[];
 
   // Activity deviation stats
-  activityDeviations: ActivityDeviation[];
+  activityDeviations: ActivityDeviationResult;
   outcomeBins: OutcomeBin[];
  desiredOutcomes: string[];
  roleConformance: RoleConformance[];
@@ -56,7 +63,7 @@ interface FileContextType {
   setExtractedElements: (elements: ExtractedElement[]) => void;
   setFitnessData: (data: TraceFitness[]) => void;
   setConformanceBins: (bins: ConformanceBin[]) => void;
-  setActivityDeviations: (data: ActivityDeviation[]) => void;
+  setActivityDeviations: (data: ActivityDeviationResult) => void;
   setOutcomeBins: (bins: OutcomeBin[]) => void;
   setDesiredOutcomes: (outcomes: string[]) => void;
   setRoleConformance: (data: RoleConformance[]) => void;
@@ -75,7 +82,11 @@ export const FileProvider = ({ children }: { children: ReactNode }) => {
   const [extractedElements, setExtractedElements] = useState<ExtractedElement[]>([]);
   const [fitnessData, setFitnessData] = useState<TraceFitness[]>([]);
   const [conformanceBins, setConformanceBins] = useState<ConformanceBin[]>([]);
-  const [activityDeviations, setActivityDeviations] = useState<ActivityDeviation[]>([]);
+  const [activityDeviations, setActivityDeviations] = useState<ActivityDeviationResult>({
+    deviations: [],
+    total_traces: 0
+  });
+  
   const [outcomeBins, setOutcomeBins] = useState<OutcomeBin[]>([]);
   const [desiredOutcomes, setDesiredOutcomes] = useState<string[]>([]);
   const [roleConformance, setRoleConformance] = useState<RoleConformance[]>([]);
