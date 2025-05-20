@@ -180,7 +180,7 @@ const HeatMapAggr: React.FC = () => {
     
 
     data = {
-      labels: aggregatedBins.map((bin) => bin.averageConformance.toFixed(2)),
+      labels: aggregatedBins.map((_, index) => ((index + 1) / aggregatedBins.length).toFixed(1)),
       datasets: [
         {
           label: 'Traces',
