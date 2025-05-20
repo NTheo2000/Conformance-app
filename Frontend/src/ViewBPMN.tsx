@@ -50,7 +50,14 @@ const ViewBPMN: React.FC = () => {
         // Change text color to black for visibility
         const gfx = document.querySelector(`[data-element-id="${activityId}"] text`);
         if (gfx) {
-          (gfx as SVGTextElement).style.fill = "black"; 
+          if (gfx) {
+            if (gfx) {
+              (gfx as SVGTextElement).style.fill = 'black';
+              (gfx as SVGTextElement).style.fontWeight = 'bold';
+            }
+            
+          }
+          
         }
       } else {
         console.warn(`Element with ID ${activityId} not found`);
@@ -64,6 +71,14 @@ const ViewBPMN: React.FC = () => {
     '#fff5f0', '#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a',
     '#ef3b2c', '#cb181d', '#a50f15', '#67000d'
   ];
+  function isDarkColor(hex: string): boolean {
+    const r = parseInt(hex.substr(1, 2), 16);
+    const g = parseInt(hex.substr(3, 2), 16);
+    const b = parseInt(hex.substr(5, 2), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness < 128;
+  }
+  
   
   
   const applyColors = (deviations: { [activityId: string]: { skipped: number; inserted: number } }) => {
@@ -92,8 +107,17 @@ const ViewBPMN: React.FC = () => {
   
         const gfx = document.querySelector(`[data-element-id="${element.id}"] text`);
         if (gfx) {
-          (gfx as SVGTextElement).style.fill = 'black';
+          if (gfx) {
+            const textColor = color.toLowerCase() === '#67000d' ? 'white' : 'black';
+            (gfx as SVGTextElement).style.fill = textColor;
+            (gfx as SVGTextElement).style.fontWeight = 'bold';
+          }
+          
+
+
+
         }
+        
       }
     });
   };
@@ -167,12 +191,15 @@ const ViewBPMN: React.FC = () => {
               statsBox.style.borderRadius = '4px';
               statsBox.style.pointerEvents = 'none';
               statsBox.style.zIndex = '1000';
-              statsBox.style.width = '140px';
+              statsBox.style.width = '200px'; // or even 220px for more comfort
+              statsBox.style.padding = '10px'; // slightly more padding
+
           
               // ✅ Use `generatedStats` instead of outdated `activityStats`
-              const stats: Pick<ActivityDeviation, 'skipped' | 'inserted'> =
-  activityDeviations.deviations.find((d) => d.name === element.businessObject.name)
-  || { skipped: 0, inserted: 0 };
+              const stats: ActivityDeviation = 
+              activityDeviations.deviations.find((d) => d.name === element.businessObject.name)
+              || { name: '', skipped: 0, inserted: 0, skipped_percent: 0, inserted_percent: 0 };
+            
 
 
 
@@ -183,15 +210,22 @@ const ViewBPMN: React.FC = () => {
               <div style="margin-bottom: 8px; text-align: center; font-weight: bold; color: white; background-color: black; padding: 4px; border-radius: 4px;">
                 Activity Stats
               </div>
-              <div style="display: flex; justify-content: space-between; margin: 6px 0; font-size: 14px;">
+            
+              <div style="display: flex; justify-content: flex-start; gap: 8px; margin: 6px 0; font-size: 14px;">
                 <span style="font-weight: bold; color: black;">Times Skipped:</span>
-                <span style="color: black; font-weight: 500;">${stats.skipped}</span>
+                <span style="color: black; font-weight: 500;">
+                  ${stats.skipped} (${stats.skipped_percent.toFixed(1)}%)
+                </span>
               </div>
-              <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 14px;">
+            
+              <div style="display: flex; justify-content: flex-start; gap: 8px; margin-top: 4px; font-size: 14px;">
                 <span style="font-weight: bold; color: black;">Times Inserted:</span>
-                <span style="color: black; font-weight: 500;">${stats.inserted}</span>
+                <span style="color: black; font-weight: 500;">
+                  ${stats.inserted} (${stats.inserted_percent.toFixed(1)}%)
+                </span>
               </div>
             `;
+            
             
             
           
