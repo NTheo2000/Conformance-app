@@ -217,7 +217,7 @@ const HeatMapAggr: React.FC = () => {
       const binLabel = tooltipItem.label;
       const traceCount = tooltipItem.raw;
       const uniqueCount = uniqueSequences?.[binIndex]?.uniqueSequences ?? 'N/A';
-      return `Bin Avg Conformance: ${binLabel}, Traces: ${traceCount}, Unique Sequences: ${uniqueCount}`;
+      return `Bin Avg Conformance: ${binLabel}, Traces: ${traceCount}, Unique Activity Sequences: ${uniqueCount}`;
     },
   },
 },
