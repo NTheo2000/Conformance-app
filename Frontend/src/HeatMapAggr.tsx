@@ -54,7 +54,7 @@ const aggregateTraces = (traces: { trace: string; conformance: number }[], numBi
 
 
 const HeatMapAggr: React.FC = () => {
-  const { fitnessData, conformanceBins } = useFileContext();
+  const { fitnessData, conformanceBins, uniqueSequences } = useFileContext();
   const [conformance, setConformance] = useState<number>(0);
   const [selectedTraces, setSelectedTraces] = useState<number[]>([]);
   const [traceInput, setTraceInput] = useState<string>('');
@@ -210,15 +210,18 @@ const HeatMapAggr: React.FC = () => {
         },
       },
       plugins: {
-        tooltip: {
-          callbacks: {
-            label: function (tooltipItem: any) {
-              const binLabel = tooltipItem.label;
-              const traceCount = tooltipItem.raw;
-              return `Bin Avg Conformance: ${binLabel}, Traces: ${traceCount}`;
-            },
-          },
-        },
+       tooltip: {
+  callbacks: {
+    label: function (tooltipItem: any) {
+      const binIndex = tooltipItem.dataIndex;
+      const binLabel = tooltipItem.label;
+      const traceCount = tooltipItem.raw;
+      const uniqueCount = uniqueSequences?.[binIndex]?.uniqueSequences ?? 'N/A';
+      return `Bin Avg Conformance: ${binLabel}, Traces: ${traceCount}, Unique Sequences: ${uniqueCount}`;
+    },
+  },
+},
+
         zoom: {
           pan: {
             enabled: true,

@@ -11,7 +11,7 @@ from process_mining.conformance_alignments import (
     get_fitness_per_trace,
     get_conformance_bins,
     get_outcome_distribution,
-    get_conformance_by_role 
+    get_conformance_by_role,get_unique_sequences_per_bin 
 )
 
 from process_mining.activity_deviations import get_activity_deviations
@@ -101,6 +101,17 @@ def api_conformance_by_role():
     aligned_traces = calculate_alignments(last_uploaded_files['bpmn'], last_uploaded_files['xes'])
     result = get_conformance_by_role(last_uploaded_files['xes'], aligned_traces)
     return jsonify(result)
+
+@app.route("/api/unique-sequences", methods=["GET"])
+def unique_sequences():
+    if not last_uploaded_files['bpmn'] or not last_uploaded_files['xes']:
+        return jsonify({"error": "Files not uploaded yet"}), 400
+
+    aligned_traces = calculate_alignments(last_uploaded_files['bpmn'], last_uploaded_files['xes'])
+    result = get_unique_sequences_per_bin(last_uploaded_files['xes'], aligned_traces)
+    return jsonify(result)
+
+
 
 
 if __name__ == '__main__':

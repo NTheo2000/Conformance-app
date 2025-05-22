@@ -56,6 +56,8 @@ interface FileContextType {
   outcomeBins: OutcomeBin[];
  desiredOutcomes: string[];
  roleConformance: RoleConformance[];
+ uniqueSequences: any[];
+setUniqueSequences: React.Dispatch<React.SetStateAction<any[]>>;
 
   // Setters
   setBpmnFileContent: (content: string | null) => void;
@@ -86,6 +88,8 @@ export const FileProvider = ({ children }: { children: ReactNode }) => {
     deviations: [],
     total_traces: 0
   });
+  const [uniqueSequences, setUniqueSequences] = useState<any[]>([]);
+
   
   const [outcomeBins, setOutcomeBins] = useState<OutcomeBin[]>([]);
   const [desiredOutcomes, setDesiredOutcomes] = useState<string[]>([]);
@@ -115,6 +119,8 @@ desiredOutcomes,
 setDesiredOutcomes,
 roleConformance,
   setRoleConformance,
+setUniqueSequences,
+  uniqueSequences,
 
       }}
     >

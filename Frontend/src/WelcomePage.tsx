@@ -20,7 +20,8 @@ const WelcomePage: React.FC = () => {
     setActivityDeviations,
     setOutcomeBins,
     setDesiredOutcomes,
-    setRoleConformance
+    setRoleConformance,
+    setUniqueSequences,
   } = useFileContext();
   
 
@@ -67,6 +68,12 @@ const WelcomePage: React.FC = () => {
       });
       const uploadData = await uploadResponse.json();
       console.log('Upload Response:', uploadData);
+
+      const sequenceResponse = await fetch('http://127.0.0.1:5000/api/unique-sequences');
+      const sequenceJson = await sequenceResponse.json();
+      setUniqueSequences(sequenceJson);
+      console.log('Unique Sequences per Bin:', sequenceJson);
+
 
       const fitnessResponse = await fetch('http://127.0.0.1:5000/api/fitness');
       const fitnessJson = await fitnessResponse.json();

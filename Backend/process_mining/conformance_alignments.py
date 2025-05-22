@@ -101,6 +101,22 @@ def get_outcome_distribution(bpmn_path, xes_path, aligned_traces):
         "desiredOutcomes": desired_outcomes,
         "bins": bins
     }
+def get_unique_sequences_per_bin(xes_path, aligned_traces):
+    if not os.path.exists(xes_path):
+        raise FileNotFoundError(f"XES file not found: {xes_path}")
+
+    log = xes_importer.apply(xes_path)
+
+    bins = [set() for _ in range(10)]
+
+    for i, trace in enumerate(log):
+        fitness = aligned_traces[i].get("fitness", 0)
+        bin_index = min(int(fitness * 10), 9)
+        sequence = tuple(event["concept:name"] for event in trace if "concept:name" in event)
+        bins[bin_index].add(sequence)
+
+    return [{"bin": i, "uniqueSequences": len(bins[i])} for i in range(10)]
+
 def get_conformance_by_role(xes_path, aligned_traces):
     log = xes_importer.apply(xes_path)
 
