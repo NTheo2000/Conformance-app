@@ -164,12 +164,6 @@ const scatterOptions: ChartOptions<'scatter'> = {
         </Tooltip>
       </Box>
 
-      <Box sx={{ mb: 2 }}>
-        <Select fullWidth value={chartType} onChange={(e) => setChartType(e.target.value as 'role' | 'amount')}>
-          <MenuItem value="role">Conformance per Role</MenuItem>
-          <MenuItem value="amount">Requested Amount vs Conformance</MenuItem>
-        </Select>
-      </Box>
 
       <Typography variant="h6">Conformance Threshold</Typography>
       <Slider
@@ -186,6 +180,17 @@ const scatterOptions: ChartOptions<'scatter'> = {
       <Button variant="contained" color="primary" onClick={handleReset} sx={{ my: 2 }}>
         Reset
       </Button>
+<Box sx={{ mb: 2 }}>
+  <Select
+    value={chartType}
+    onChange={(e) => setChartType(e.target.value as 'role' | 'amount')}
+    sx={{ width: 'fit-content', minWidth: 280 }} // Optional minWidth fallback
+  >
+    <MenuItem value="role">Conformance per Role</MenuItem>
+    <MenuItem value="amount">Requested Amount vs Conformance</MenuItem>
+  </Select>
+</Box>
+
 
       {chartType === 'role' && (
         <TextField
