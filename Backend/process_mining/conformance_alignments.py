@@ -5,6 +5,7 @@ from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.conformance.alignments.petri_net import algorithm as alignments
 from collections import defaultdict
 
+
 def calculate_alignments(bpmn_path: str, xes_path: str):
     if not os.path.exists(bpmn_path):
         raise FileNotFoundError(f"BPMN file not found: {bpmn_path}")
@@ -140,3 +141,21 @@ def get_conformance_by_role(xes_path, aligned_traces):
         })
 
     return result
+
+def get_requested_amount_vs_conformance(xes_path, aligned_traces):
+    
+    log = xes_importer.apply(xes_path)
+    result = []
+
+    for i, trace in enumerate(log):
+        trace_attrs = trace.attributes
+        if "RequestedAmount" in trace_attrs:
+            requested_amount = trace_attrs["RequestedAmount"]  # ✅ FIXED LINE
+            fitness = aligned_traces[i].get("fitness", 0)
+            result.append({
+                "conformance": round(fitness, 4),
+                "requested_amount": float(requested_amount)
+            })
+
+    return result
+

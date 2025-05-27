@@ -22,6 +22,7 @@ const WelcomePage: React.FC = () => {
     setDesiredOutcomes,
     setRoleConformance,
     setUniqueSequences,
+    setAmountConformanceData
   } = useFileContext();
   
 
@@ -104,6 +105,12 @@ const WelcomePage: React.FC = () => {
       const roleJson = await roleResponse.json();
       setRoleConformance(roleJson);
       console.log('Role-Based Conformance:', roleJson);
+
+      const amountResponse = await fetch('http://127.0.0.1:5000/api/requested-amounts');
+const amountJson = await amountResponse.json();
+setAmountConformanceData(amountJson);
+console.log('Requested Amount vs Conformance:', amountJson);
+
 
 
       setUploadComplete(true);

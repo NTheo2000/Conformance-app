@@ -44,6 +44,10 @@ interface FileContextType {
   bpmnFileContent: string | null;
   xesFileContent: string | null;
 
+  
+  amountConformanceData: any[];
+  setAmountConformanceData: React.Dispatch<React.SetStateAction<any[]>>;
+
   // Extracted BPMN elements
   extractedElements: ExtractedElement[];
 
@@ -89,6 +93,8 @@ export const FileProvider = ({ children }: { children: ReactNode }) => {
     total_traces: 0
   });
   const [uniqueSequences, setUniqueSequences] = useState<any[]>([]);
+  const [amountConformanceData, setAmountConformanceData] = useState<any[]>([]);
+
 
   
   const [outcomeBins, setOutcomeBins] = useState<OutcomeBin[]>([]);
@@ -121,6 +127,8 @@ roleConformance,
   setRoleConformance,
 setUniqueSequences,
   uniqueSequences,
+   amountConformanceData,
+  setAmountConformanceData
 
       }}
     >
