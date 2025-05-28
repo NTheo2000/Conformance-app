@@ -149,13 +149,27 @@ def get_requested_amount_vs_conformance(xes_path, aligned_traces):
 
     for i, trace in enumerate(log):
         trace_attrs = trace.attributes
-        if "RequestedAmount" in trace_attrs:
-            requested_amount = trace_attrs["RequestedAmount"]  # ✅ FIXED LINE
+
+        # Try both "RequestedAmount" and "Amount" as keys
+        requested_amount = (
+            trace_attrs.get("RequestedAmount") or
+            trace_attrs.get("Amount")
+        )
+
+        # If neither exists, skip this trace
+        if requested_amount is None:
+            continue
+
+        try:
             fitness = aligned_traces[i].get("fitness", 0)
             result.append({
                 "conformance": round(fitness, 4),
                 "requested_amount": float(requested_amount)
             })
+        except Exception as e:
+            print(f"Error processing trace {i}: {e}")
+            continue
 
     return result
+
 
