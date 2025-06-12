@@ -24,11 +24,11 @@ const ViolationGuidelines: React.FC = () => {
   const [conformance, setConformance] = useState<number>(0);
   const [resourceInput, setResourceInput] = useState<string>('');
   const [selectedResources, setSelectedResources] = useState<number[]>([]);
-  const [chartType, setChartType] = useState<'role' | 'amount'>('role');
+  const [chartType, setChartType] = useState<'role' | 'amount' | 'resource'>('role');
   const chartRef = useRef<any>(null);
   const navigate = useNavigate();
 
-  const { roleConformance, amountConformanceData } = useFileContext();
+  const { roleConformance, amountConformanceData, resourceConformance } = useFileContext();
 
   const formatRoleLabel = (role: string) => role.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
@@ -60,6 +60,12 @@ const ViolationGuidelines: React.FC = () => {
     (selectedResources.length === 0 || selectedResources.includes(index + 1))
   );
 
+  const filteredResources = resourceConformance.filter((item, index) =>
+  item.avg_conformance >= conformance &&
+  (selectedResources.length === 0 || selectedResources.includes(index + 1))
+);
+
+
   const roleChartData = {
     labels: filteredRoles.map(r => formatRoleLabel(r.role)),
     datasets: [
@@ -71,6 +77,23 @@ const ViolationGuidelines: React.FC = () => {
       },
     ],
   };
+const resourceChartData = {
+  labels: filteredResources.map((r) => r.resource), // Use actual names
+  datasets: [
+    {
+      label: 'Average Conformance',
+      data: filteredResources.map(resource => ({
+        x: resource.resource, // Use actual resource name
+        y: resource.avg_conformance,
+        traceCount: resource.traceCount ?? 'N/A', // optional
+      })),
+      backgroundColor: filteredResources.map(r => getColorForConformance(r.avg_conformance)),
+      borderWidth: 1,
+    },
+  ],
+};
+
+
 
 // Clean and filter the data
 const filteredAmountData = Array.isArray(amountConformanceData)
@@ -188,28 +211,42 @@ const scatterOptions: ChartOptions<'scatter'> = {
   >
     <MenuItem value="role">Conformance per Role</MenuItem>
     <MenuItem value="amount">Requested Amount vs Conformance</MenuItem>
+    <MenuItem value="resource">Conformance per Resource</MenuItem>
   </Select>
 </Box>
 
 
-      {chartType === 'role' && (
-        <TextField
-          fullWidth
-          variant="outlined"
-          value={resourceInput}
-          onChange={handleResourceInput}
-          placeholder="Enter Role Index Numbers (comma-separated, e.g., 1,2)"
-          sx={{ mb: 2 }}
-        />
-      )}
+{chartType === 'role' && (
+  <TextField
+    fullWidth
+    variant="outlined"
+    value={resourceInput}
+    onChange={handleResourceInput}
+    placeholder="Enter Role Index Numbers (comma-separated, e.g., 1,2)"
+    sx={{ mb: 2 }}
+  />
+)}
+{chartType === 'resource' && (
+  <TextField
+    fullWidth
+    variant="outlined"
+    value={resourceInput}
+    onChange={handleResourceInput}
+    placeholder="Enter Resource Index Numbers (comma-separated, e.g., 1,2)"
+    sx={{ mb: 2 }}
+  />
+)}
 
-      <Box sx={{ height: 500 }}>
-        {chartType === 'role' ? (
-          <Bar ref={chartRef} data={roleChartData} options={roleOptions} />
-        ) : (
-          <Scatter ref={chartRef} data={scatterData} options={scatterOptions} />
-        )}
-      </Box>
+<Box sx={{ height: 500 }}>
+  {chartType === 'role' ? (
+    <Bar ref={chartRef} data={roleChartData} options={roleOptions} />
+  ) : chartType === 'resource' ? (
+    <Bar ref={chartRef} data={resourceChartData} options={roleOptions} />
+  ) : (
+    <Scatter ref={chartRef} data={scatterData} options={scatterOptions} />
+  )}
+</Box>
+
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
         <Button variant="contained" color="primary" onClick={() => navigate('/heatmap-aggr')}>←</Button>

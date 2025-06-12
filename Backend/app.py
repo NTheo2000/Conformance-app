@@ -12,10 +12,13 @@ from process_mining.conformance_alignments import (
     get_conformance_bins,
     get_outcome_distribution,
     get_conformance_by_role,get_unique_sequences_per_bin,
-    get_requested_amount_vs_conformance
+    get_requested_amount_vs_conformance,
+    get_conformance_by_resource
 )
 
 from process_mining.activity_deviations import get_activity_deviations
+from pm4py.objects.log.importer.xes import importer as xes_importer
+
 
 app = Flask(__name__)
 CORS(app)
@@ -120,6 +123,19 @@ def api_requested_amounts():
     aligned_traces = calculate_alignments(last_uploaded_files['bpmn'], last_uploaded_files['xes'])
     result = get_requested_amount_vs_conformance(last_uploaded_files['xes'], aligned_traces)
     return jsonify(result)
+
+@app.route('/api/conformance-by-resource', methods=['GET'])
+def api_conformance_by_resource():
+    if not last_uploaded_files['bpmn'] or not last_uploaded_files['xes']:
+        return jsonify({"error": "No files uploaded yet."}), 400
+
+    aligned_traces = calculate_alignments(last_uploaded_files['bpmn'], last_uploaded_files['xes'])
+
+    xes_log = xes_importer.apply(last_uploaded_files['xes'])
+
+    result = get_conformance_by_resource(xes_log, aligned_traces)
+    return jsonify(result)
+
 
 
 

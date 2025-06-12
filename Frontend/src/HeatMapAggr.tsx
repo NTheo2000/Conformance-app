@@ -6,6 +6,8 @@ import { Bar } from 'react-chartjs-2';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import InfoIcon from '@mui/icons-material/Info';
 import { useFileContext } from './FileContext';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+
 
 
 
@@ -59,7 +61,12 @@ const HeatMapAggr: React.FC = () => {
   const [selectedTraces, setSelectedTraces] = useState<number[]>([]);
   const [traceInput, setTraceInput] = useState<string>('');
   const chartRef = useRef<any>(null);
+  const chartLabelsRef = useRef<string[]>([]);
   const navigate = useNavigate();
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedBinSequences, setSelectedBinSequences] = useState<string[][]>([]);
+  const [selectedBinLabel, setSelectedBinLabel] = useState<string>('');
+
 
   const traces = fitnessData.map((item) => item.trace);
   const conformanceValues = fitnessData.map((item) => item.conformance);
@@ -90,6 +97,24 @@ const HeatMapAggr: React.FC = () => {
       chartRef.current.resetZoom();
     }
   };
+  const handleBarClick = (event: any) => {
+  if (!chartRef.current) return;
+
+  const chart = chartRef.current;
+  const elements = chart.getElementsAtEventForMode(event.nativeEvent, 'nearest', { intersect: true }, true);
+
+  if (elements.length > 0) {
+    const index = elements[0].index;
+    const bin = uniqueSequences?.[index];
+    if (!bin) return;
+
+    setSelectedBinSequences(bin.sequences);
+    setSelectedBinLabel(chartLabelsRef.current[index]);
+
+    setOpenModal(true);
+  }
+};
+
 
   const filteredData = traces
     .map((trace, index) => ({ trace, conformance: conformanceValues[index] }))
@@ -105,6 +130,9 @@ const HeatMapAggr: React.FC = () => {
         conformance: conformanceValues[traceNum - 1],
       }))
       .filter((item) => item.conformance >= conformance);
+
+      chartLabelsRef.current = selectedData.map((item) => item.trace);
+
 
     data = {
       labels: selectedData.map((item) => item.trace),
@@ -178,6 +206,7 @@ const HeatMapAggr: React.FC = () => {
     }));
   
     
+    chartLabelsRef.current = aggregatedBins.map((_, index) => ((index + 1) / aggregatedBins.length).toFixed(1));
 
     data = {
       labels: aggregatedBins.map((_, index) => ((index + 1) / aggregatedBins.length).toFixed(1)),
@@ -212,13 +241,18 @@ const HeatMapAggr: React.FC = () => {
       plugins: {
        tooltip: {
   callbacks: {
-    label: function (tooltipItem: any) {
-      const binIndex = tooltipItem.dataIndex;
-      const binLabel = tooltipItem.label;
-      const traceCount = tooltipItem.raw;
-      const uniqueCount = uniqueSequences?.[binIndex]?.uniqueSequences ?? 'N/A';
-      return `Bin Avg Conformance: ${binLabel}, Traces: ${traceCount}, Unique Activity Sequences: ${uniqueCount}`;
-    },
+ label: function (tooltipItem: any) {
+  const binIndex = tooltipItem.dataIndex;
+  const binLabel = tooltipItem.label;
+  const traceCount = tooltipItem.raw;
+  const uniqueCount = uniqueSequences?.[binIndex]?.uniqueSequences ?? 'N/A';
+  return [
+    `Bin Avg Conformance: ${binLabel}`,
+    `Traces: ${traceCount}`,
+    `Unique Sequences: ${uniqueCount}`,
+    `💡 Click to view sequences`,
+  ];
+}
   },
 },
 
@@ -292,9 +326,14 @@ const HeatMapAggr: React.FC = () => {
         placeholder="e.g. 15, 19, 45"
         sx={{ marginBottom: 2 }}
       />
+      <Typography variant="body2" color="textSecondary" sx={{ marginBottom: 1 }}>
+  💡 Tip: Click on a bar to see its activity sequences.
+</Typography>
+
 
       <Box sx={{ height: 500 }}>
-        <Bar ref={chartRef} data={data} options={chartOptions} />
+        <Bar ref={chartRef} data={data} options={chartOptions} onClick={handleBarClick} />
+
       </Box>
 
       <Button
@@ -335,6 +374,26 @@ const HeatMapAggr: React.FC = () => {
       >
         →
       </Button>
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="md" fullWidth>
+  <DialogTitle>Unique Activity Sequences for Bin {selectedBinLabel}</DialogTitle>
+  <DialogContent dividers>
+    {selectedBinSequences.length > 0 ? (
+      <ul>
+        {selectedBinSequences.map((seq, idx) => (
+          <li key={idx}>{seq.join(' → ')}</li>
+        ))}
+      </ul>
+    ) : (
+      <Typography>No sequences available.</Typography>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setOpenModal(false)} color="primary">
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
+
     </Box>
   );
 };

@@ -19,6 +19,17 @@ interface RoleConformance {
   averageConformance: number;
   traceCount: number;
 }
+interface ResourceConformance {
+  resource: string;
+  avg_conformance: number;
+  traceCount: number;
+}
+export interface UniqueSequenceBin {
+  bin: number;
+  uniqueSequences: number;
+  sequences: string[][];
+}
+
 
 
 interface ConformanceBin {
@@ -55,13 +66,18 @@ interface FileContextType {
   fitnessData: TraceFitness[];
   conformanceBins: ConformanceBin[];
 
+  resourceConformance: ResourceConformance[];
+setResourceConformance: React.Dispatch<React.SetStateAction<ResourceConformance[]>>;
+
+
   // Activity deviation stats
   activityDeviations: ActivityDeviationResult;
   outcomeBins: OutcomeBin[];
  desiredOutcomes: string[];
  roleConformance: RoleConformance[];
- uniqueSequences: any[];
-setUniqueSequences: React.Dispatch<React.SetStateAction<any[]>>;
+ uniqueSequences: UniqueSequenceBin[];
+setUniqueSequences: React.Dispatch<React.SetStateAction<UniqueSequenceBin[]>>;
+
 
   // Setters
   setBpmnFileContent: (content: string | null) => void;
@@ -92,8 +108,10 @@ export const FileProvider = ({ children }: { children: ReactNode }) => {
     deviations: [],
     total_traces: 0
   });
-  const [uniqueSequences, setUniqueSequences] = useState<any[]>([]);
+  const [uniqueSequences, setUniqueSequences] = useState<UniqueSequenceBin[]>([]);
   const [amountConformanceData, setAmountConformanceData] = useState<any[]>([]);
+  const [resourceConformance, setResourceConformance] = useState<ResourceConformance[]>([]);
+
 
 
   
@@ -128,7 +146,9 @@ roleConformance,
 setUniqueSequences,
   uniqueSequences,
    amountConformanceData,
-  setAmountConformanceData
+  setAmountConformanceData,
+  resourceConformance,
+setResourceConformance
 
       }}
     >

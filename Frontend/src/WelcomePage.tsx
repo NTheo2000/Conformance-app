@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useFileContext } from './FileContext';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { UniqueSequenceBin } from './FileContext';
+
 
 const WelcomePage: React.FC = () => {
   const [bpmnFile, setBpmnFile] = useState<File | null>(null);
@@ -22,7 +24,8 @@ const WelcomePage: React.FC = () => {
     setDesiredOutcomes,
     setRoleConformance,
     setUniqueSequences,
-    setAmountConformanceData
+    setAmountConformanceData,
+    setResourceConformance
   } = useFileContext();
   
 
@@ -71,7 +74,7 @@ const WelcomePage: React.FC = () => {
       console.log('Upload Response:', uploadData);
 
       const sequenceResponse = await fetch('http://127.0.0.1:5000/api/unique-sequences');
-      const sequenceJson = await sequenceResponse.json();
+      const sequenceJson: UniqueSequenceBin[] = await sequenceResponse.json();
       setUniqueSequences(sequenceJson);
       console.log('Unique Sequences per Bin:', sequenceJson);
 
@@ -105,6 +108,11 @@ const WelcomePage: React.FC = () => {
       const roleJson = await roleResponse.json();
       setRoleConformance(roleJson);
       console.log('Role-Based Conformance:', roleJson);
+
+      const resourceResponse = await fetch('http://127.0.0.1:5000/api/conformance-by-resource');
+const resourceJson = await resourceResponse.json();
+setResourceConformance(resourceJson);
+console.log('Resource-Based Conformance:', resourceJson);
 
       const amountResponse = await fetch('http://127.0.0.1:5000/api/requested-amounts');
 const amountJson = await amountResponse.json();

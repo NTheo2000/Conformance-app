@@ -116,7 +116,15 @@ def get_unique_sequences_per_bin(xes_path, aligned_traces):
         sequence = tuple(event["concept:name"] for event in trace if "concept:name" in event)
         bins[bin_index].add(sequence)
 
-    return [{"bin": i, "uniqueSequences": len(bins[i])} for i in range(10)]
+    return [
+        {
+            "bin": i,
+            "uniqueSequences": len(bins[i]),
+            "sequences": [list(seq) for seq in bins[i]]  # Convert tuple to list for JSON serialization
+        }
+        for i in range(10)
+    ]
+
 
 def get_conformance_by_role(xes_path, aligned_traces):
     log = xes_importer.apply(xes_path)
@@ -169,6 +177,26 @@ def get_requested_amount_vs_conformance(xes_path, aligned_traces):
         except Exception as e:
             print(f"Error processing trace {i}: {e}")
             continue
+
+    return result
+
+def get_conformance_by_resource(xes_log, aligned_traces):
+    resource_conformance = defaultdict(list)
+
+    for i, trace in enumerate(xes_log):
+        fitness = aligned_traces[i].get("fitness", 0)
+        for event in trace:
+            resource = event.get("org:resource")
+            if resource:
+                resource_conformance[resource].append(fitness)
+
+    result = []
+    for resource, fitness_values in resource_conformance.items():
+        avg_fitness = sum(fitness_values) / len(fitness_values)
+        result.append({
+            "resource": resource,
+            "avg_conformance": round(avg_fitness, 4)
+        })
 
     return result
 
