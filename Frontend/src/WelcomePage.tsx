@@ -25,7 +25,8 @@ const WelcomePage: React.FC = () => {
     setRoleConformance,
     setUniqueSequences,
     setAmountConformanceData,
-    setResourceConformance
+    setResourceConformance,
+    setTraceSequences
   } = useFileContext();
   
 
@@ -77,6 +78,13 @@ const WelcomePage: React.FC = () => {
       const sequenceJson: UniqueSequenceBin[] = await sequenceResponse.json();
       setUniqueSequences(sequenceJson);
       console.log('Unique Sequences per Bin:', sequenceJson);
+
+    const traceSeqResponse = await fetch('http://127.0.0.1:5000/api/trace-sequences');
+    const traceSeqJson = await traceSeqResponse.json();
+    setTraceSequences(traceSeqJson);
+    console.log('Trace Sequences:', traceSeqJson);
+
+
 
 
       const fitnessResponse = await fetch('http://127.0.0.1:5000/api/fitness');

@@ -56,7 +56,7 @@ const aggregateTraces = (traces: { trace: string; conformance: number }[], numBi
 
 
 const HeatMapAggr: React.FC = () => {
-  const { fitnessData, conformanceBins, uniqueSequences } = useFileContext();
+  const { fitnessData, conformanceBins, uniqueSequences, traceSequences } = useFileContext();
   const [conformance, setConformance] = useState<number>(0);
   const [selectedTraces, setSelectedTraces] = useState<number[]>([]);
   const [traceInput, setTraceInput] = useState<string>('');
@@ -97,7 +97,7 @@ const HeatMapAggr: React.FC = () => {
       chartRef.current.resetZoom();
     }
   };
-  const handleBarClick = (event: any) => {
+const handleBarClick = (event: any) => {
   if (!chartRef.current) return;
 
   const chart = chartRef.current;
@@ -105,15 +105,35 @@ const HeatMapAggr: React.FC = () => {
 
   if (elements.length > 0) {
     const index = elements[0].index;
-    const bin = uniqueSequences?.[index];
-    if (!bin) return;
 
-    setSelectedBinSequences(bin.sequences);
-    setSelectedBinLabel(chartLabelsRef.current[index]);
+    // If we're showing selected traces
+  if (selectedTraces.length > 0) {
+  const traceNum = selectedTraces[index]; // 1-based trace number
+  const traceId = `Trace ${traceNum}`;
+  const traceSequenceObj = traceSequences.find(seq => seq.trace === traceId);
+  const traceFitness = fitnessData.find(f => f.trace === traceId);
+
+  if (!traceSequenceObj || !traceFitness) return;
+
+  const binIndex = Math.min(Math.floor(traceFitness.conformance * 10), 9);
+  const bin = uniqueSequences?.[binIndex];
+
+ setSelectedBinSequences([traceSequenceObj.sequence]);
+
+  setSelectedBinLabel(`${traceId} (Bin ${binIndex / 10}–${(binIndex + 1) / 10})`);
+}
+ else {
+      // Bin view (default)
+      const bin = uniqueSequences?.[index];
+      if (!bin) return;
+      setSelectedBinSequences(bin.sequences);
+      setSelectedBinLabel(chartLabelsRef.current[index]);
+    }
 
     setOpenModal(true);
   }
 };
+
 
 
   const filteredData = traces
@@ -375,7 +395,8 @@ const HeatMapAggr: React.FC = () => {
         →
       </Button>
       <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth="md" fullWidth>
-  <DialogTitle>Unique Activity Sequences for Bin {selectedBinLabel}</DialogTitle>
+  <DialogTitle>Activity Sequences for {selectedBinLabel}</DialogTitle>
+
   <DialogContent dividers>
     {selectedBinSequences.length > 0 ? (
       <ul>

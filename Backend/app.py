@@ -13,7 +13,8 @@ from process_mining.conformance_alignments import (
     get_outcome_distribution,
     get_conformance_by_role,get_unique_sequences_per_bin,
     get_requested_amount_vs_conformance,
-    get_conformance_by_resource
+    get_conformance_by_resource,
+    get_trace_sequences
 )
 
 from process_mining.activity_deviations import get_activity_deviations
@@ -135,6 +136,14 @@ def api_conformance_by_resource():
 
     result = get_conformance_by_resource(xes_log, aligned_traces)
     return jsonify(result)
+@app.route('/api/trace-sequences', methods=['GET'])
+def api_trace_sequences():
+    if not last_uploaded_files['xes']:
+        return jsonify({"error": "No XES file uploaded yet."}), 400
+
+    result = get_trace_sequences(last_uploaded_files['xes'])
+    return jsonify(result)
+
 
 
 

@@ -199,5 +199,19 @@ def get_conformance_by_resource(xes_log, aligned_traces):
         })
 
     return result
+def get_trace_sequences(xes_path):
+    if not os.path.exists(xes_path):
+        raise FileNotFoundError(f"XES file not found: {xes_path}")
+    
+    log = xes_importer.apply(xes_path)
+    result = []
 
+    for i, trace in enumerate(log):
+        sequence = [event["concept:name"] for event in trace if "concept:name" in event]
+        result.append({
+            "trace": f"Trace {i + 1}",
+            "sequence": sequence
+        })
+
+    return result
 

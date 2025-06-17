@@ -9,6 +9,10 @@ interface TraceFitness {
   trace: string;
   conformance: number;
 }
+interface TraceSequence {
+  trace: string;
+  sequence: string[];
+}
 interface OutcomeBin {
   range: [number, number];
   traceCount: number;
@@ -89,6 +93,9 @@ setUniqueSequences: React.Dispatch<React.SetStateAction<UniqueSequenceBin[]>>;
   setOutcomeBins: (bins: OutcomeBin[]) => void;
   setDesiredOutcomes: (outcomes: string[]) => void;
   setRoleConformance: (data: RoleConformance[]) => void;
+  traceSequences: TraceSequence[];
+setTraceSequences: React.Dispatch<React.SetStateAction<TraceSequence[]>>;
+
 
   // Outcome distribution
 
@@ -103,6 +110,7 @@ export const FileProvider = ({ children }: { children: ReactNode }) => {
   const [xesFileContent, setXesFileContent] = useState<string | null>(null);
   const [extractedElements, setExtractedElements] = useState<ExtractedElement[]>([]);
   const [fitnessData, setFitnessData] = useState<TraceFitness[]>([]);
+  const [traceSequences, setTraceSequences] = useState<TraceSequence[]>([]);
   const [conformanceBins, setConformanceBins] = useState<ConformanceBin[]>([]);
   const [activityDeviations, setActivityDeviations] = useState<ActivityDeviationResult>({
     deviations: [],
@@ -148,7 +156,10 @@ setUniqueSequences,
    amountConformanceData,
   setAmountConformanceData,
   resourceConformance,
-setResourceConformance
+setResourceConformance,
+traceSequences,
+setTraceSequences,
+
 
       }}
     >
