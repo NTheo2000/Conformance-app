@@ -81,46 +81,40 @@ const ViewBPMN: React.FC = () => {
   
   
   
-  const applyColors = (deviations: { [activityId: string]: { skipped: number; inserted: number } }) => {
-    const totalDeviations = Object.values(deviations).map(d => d.skipped + d.inserted);
-    const sorted = [...totalDeviations].sort((a, b) => a - b);
-  
-    // 10% quantile thresholds
-    const quantiles: number[] = [];
-    for (let i = 0; i < 9; i++) {
-      const index = Math.floor((i / 9) * sorted.length);
-      quantiles.push(sorted[index]);
-    }
-  
-    Object.entries(deviations).forEach(([activityId, d]) => {
-      const total = d.skipped + d.inserted;
-      const index = quantiles.findIndex(q => total <= q);
-      const color = gradientColors[index >= 0 ? index : gradientColors.length - 1];
-  
-      const element = (modelerRef.current?.get('elementRegistry') as any)?.get(activityId);
-  
-      if (element) {
-        (modelerRef.current?.get('modeling') as any)?.setColor([element], {
-          stroke: color,
-          fill: color,
-        });
-  
-        const gfx = document.querySelector(`[data-element-id="${element.id}"] text`);
-        if (gfx) {
-          if (gfx) {
-            const textColor = color.toLowerCase() === '#67000d' ? 'white' : 'black';
-            (gfx as SVGTextElement).style.fill = textColor;
-            (gfx as SVGTextElement).style.fontWeight = 'bold';
-          }
-          
+const applyColors = (deviations: { [activityId: string]: { skipped: number; inserted: number } }) => {
+  const totalTraces = activityDeviations.total_traces || 1;
+
+  Object.entries(deviations).forEach(([activityId, d]) => {
+    const totalDeviation = d.skipped + d.inserted;
+
+    // Calculate conformance (1 = perfect, 0 = all traces deviated)
+    const conformance = 1 - totalDeviation / totalTraces;
+
+    // Map conformance to one of the 9 color bins (0.0–1.0 mapped to 0–8)
+    const binIndex = Math.floor(conformance * gradientColors.length);
+    const clampedIndex = Math.min(Math.max(binIndex, 0), gradientColors.length - 1);
+    const color = gradientColors[gradientColors.length - 1 - clampedIndex];
 
 
+    const element = (modelerRef.current?.get('elementRegistry') as any)?.get(activityId);
 
-        }
-        
+    if (element) {
+      (modelerRef.current?.get('modeling') as any)?.setColor([element], {
+        stroke: color,
+        fill: color,
+      });
+
+      const gfx = document.querySelector(`[data-element-id="${element.id}"] text`);
+      if (gfx) {
+        const textColor = isDarkColor(color) ? 'white' : 'black';
+        (gfx as SVGTextElement).style.fill = textColor;
+        (gfx as SVGTextElement).style.fontWeight = 'bold';
       }
-    });
-  };
+    }
+  });
+};
+
+
   
   
   
