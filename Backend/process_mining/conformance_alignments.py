@@ -195,7 +195,8 @@ def get_conformance_by_resource(xes_log, aligned_traces):
         avg_fitness = sum(fitness_values) / len(fitness_values)
         result.append({
             "resource": resource,
-            "avg_conformance": round(avg_fitness, 4)
+            "avg_conformance": round(avg_fitness, 4),
+            "traceCount": len(fitness_values)  # ✅ fix
         })
 
     return result
