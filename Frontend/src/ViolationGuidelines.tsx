@@ -248,10 +248,47 @@ const scatterOptions: ChartOptions<'scatter'> = {
 </Box>
 
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-        <Button variant="contained" color="primary" onClick={() => navigate('/heatmap-aggr')}>←</Button>
-        <Button variant="contained" color="primary" onClick={() => navigate('/conformance-outcome')}>→</Button>
-      </Box>
+<>
+  <Button
+    variant="contained"
+    color="primary"
+    sx={{
+      position: 'absolute',
+      bottom: '20px',
+      left: '20px',
+      fontSize: '1.5rem',
+      minWidth: '50px',
+      height: '50px',
+      fontWeight: 'bold',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+    onClick={() => navigate('/heatmap-aggr')}
+  >
+    ←
+  </Button>
+  <Button
+    variant="contained"
+    color="primary"
+    sx={{
+      position: 'absolute',
+      bottom: '20px',
+      right: '20px',
+      fontSize: '1.5rem',
+      minWidth: '50px',
+      height: '50px',
+      fontWeight: 'bold',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+    onClick={() => navigate('/conformance-outcome')}
+  >
+    →
+  </Button>
+</>
+
     </Box>
   );
 };
