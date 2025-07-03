@@ -136,7 +136,7 @@ const ConformanceOutcomeChart: React.FC = () => {
         <Typography variant="h5" gutterBottom align="center">
           Bubble Chart: Conformance vs Process Outcome
         </Typography>
-        <Tooltip title="Do cases with a higher degree of conformance lead to a higher probability of a positive process outcome? To answer this, we compare sub-logs with different degrees of conformance w.r.t. to their corresponding probability of a positive outcome (e.g., survival probability) over time." arrow>
+        <Tooltip title="This view shows the relationship between conformance and the desired process outcome. The desired outcome is derived from the BPMN model. Each bubble represents a conformance category, with its size indicating the number of traces within that category." arrow>
           <IconButton>
             <InfoIcon color="primary" />
           </IconButton>

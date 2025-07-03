@@ -305,7 +305,7 @@ const handleBarClick = (event: any) => {
         <Typography variant="h5" gutterBottom align="center">
           Conformance Distribution
         </Typography>
-        <Tooltip title="How does the overall degree of conformance with a set of guidelines differ between multiple logs or traces? To answer this, we first need to derive the process conformance for these entities. At the log level, this provides a more generic overview between different process executions. At the trace level, this is specific to the execution patterns found in the trace." arrow>
+        <Tooltip title="This view shows the distribution of trace conformance. Traces are grouped into 10 conformance bins based on their conformance values. Users can also filter and view specific traces by entering their trace numbers in the search bar" arrow>
           <IconButton>
             <InfoIcon color="primary" />
           </IconButton>

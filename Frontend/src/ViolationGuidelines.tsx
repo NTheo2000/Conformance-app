@@ -182,7 +182,7 @@ const scatterOptions: ChartOptions<'scatter'> = {
         <Typography variant="h5" gutterBottom align="center">
           Violation Guidelines: Conformance Visualization
         </Typography>
-        <Tooltip title="Select between role-based or amount-based conformance analysis." arrow>
+        <Tooltip title="This view illustrates the relationship between various event or trace attributes and conformance. Users can explore different visualizations by selecting the desired attribute from the dropdown menu." arrow>
           <IconButton><InfoIcon color="primary" /></IconButton>
         </Tooltip>
       </Box>

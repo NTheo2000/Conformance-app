@@ -286,7 +286,7 @@ const applyColors = (deviations: { [activityId: string]: { skipped: number; inse
         <Typography variant="h4" gutterBottom>
           BPMN File Viewer
         </Typography>
-        <Tooltip title="Where exactly does the process execution differ from the guideline? How does alternative behavior look like? This can relate to different control-flow relations, but also resource and data constraints. It can be explored on an event, trace, and log level. The task is similar 'Describe-Identify-Guideline Violation', but here the violation is not presented but needs to be explored by the analyst." arrow>
+        <Tooltip title="This view displays the BPMN model of the process. Activities are color-coded based on their conformance levels: lighter shades indicate higher conformance, while darker shades reflect lower conformance. Hovering over an activity reveals how many times it was skipped or inserted during process execution. " arrow>
           <IconButton>
             <InfoIcon color="primary" />
           </IconButton>

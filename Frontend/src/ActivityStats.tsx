@@ -49,7 +49,7 @@ const activityStats = extractedElements
         <Typography variant="h4" gutterBottom>
           Activity Deviations
         </Typography>
-        <Tooltip title="Where exactly does the process execution differ from the guideline? How does alternative behavior look like? This can relate to different control-flow relations, but also resource and data constraints. It can be explored on an event, trace, and log level. The task is similar 'Describe-Identify-Guideline Violation', but here the violation is not presented but needs to be explored by the analyst." arrow>
+        <Tooltip title="This view shows the number of times each activity has been skipped or inserted. Activities are sorted in descending order based on their total number of deviations, with those exhibiting the most deviations appearing first." arrow>
           <IconButton>
             <InfoIcon color="primary" />
           </IconButton>
