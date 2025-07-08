@@ -136,6 +136,38 @@ console.log('Requested Amount vs Conformance:', amountJson);
       setIsUploading(false);
     }
   };
+  const handlePreloadDataset = async () => {
+  try {
+    const bpmnResponse = await fetch('http://127.0.0.1:5000/preload/default.bpmn');
+    const xesResponse = await fetch('http://127.0.0.1:5000/preload/default.xes');
+
+    if (!bpmnResponse.ok || !xesResponse.ok) {
+      throw new Error('Failed to fetch default files');
+    }
+
+    const bpmnText = await bpmnResponse.text();
+    const xesText = await xesResponse.text();
+
+    // Convert to Blob and File objects
+    const bpmnBlob = new Blob([bpmnText], { type: 'text/xml' });
+    const xesBlob = new Blob([xesText], { type: 'text/xml' }); // assuming .xes is XML
+
+    const bpmnFile = new File([bpmnBlob], 'default.bpmn', { type: 'text/xml' });
+    const xesFile = new File([xesBlob], 'default.xes', { type: 'text/xml' });
+
+    // Update state and file contents
+    setBpmnFile(bpmnFile);
+    setXesFile(xesFile);
+    setBpmnFileContent(bpmnText);
+    setXesFileContent(xesText);
+
+    // Automatically trigger upload
+    handleUploadOrNavigate();
+  } catch (error) {
+    console.error('Error preloading dataset:', error);
+  }
+};
+
 
   return (
     <Box sx={{ width: '100%', maxWidth: 700, margin: '0 auto', textAlign: 'center', padding: 4 }}>
@@ -211,6 +243,14 @@ console.log('Requested Amount vs Conformance:', amountJson);
   }}
 >
   {isUploading ? 'Processing...' : uploadComplete ? 'View BPMN' : 'Upload & Process'}
+</Button>
+<Button
+  variant="outlined"
+  color="secondary"
+  onClick={handlePreloadDataset}
+  sx={{ fontWeight: 'bold', padding: '12px 24px', maxWidth: 300, alignSelf: 'center' }}
+>
+  Preload Dataset
 </Button>
 
       </Stack>

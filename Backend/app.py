@@ -2,6 +2,7 @@
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask import send_from_directory
 import os
 
 from process_mining.process_bpmn import parse_bpmn
@@ -144,7 +145,9 @@ def api_trace_sequences():
     result = get_trace_sequences(last_uploaded_files['xes'])
     return jsonify(result)
 
-
+@app.route('/preload/<filename>', methods=['GET'])
+def preload_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 
 
